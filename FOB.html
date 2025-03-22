@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Delivery Service</title>
+    <style>
+        img {
+            height: 250px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: rgb(12, 3, 3);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: x-large;
+        }
+
+        nav {
+            background-color: black;
+            overflow: hidden;
+        }
+
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            float: left;
+            display: block;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .product {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .product-item {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .product-item img {
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        .product-item h3 {
+            margin-top: 10px;
+        }
+
+        .delivery-form {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: 30px auto;
+        }
+
+        .delivery-form input,
+        .delivery-form select,
+        .delivery-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Flavours of Biriyani</h1>
+    <p>NEAR VIGNAN UNIVERSITY</p>
+</header>
+
+<nav>
+    <a href="#">Home</a>
+</nav>
+
+<div class="main-content">
+    <h2>Food Available:</h2>
+    <div class="product">
+        <div class="product-item">
+            <img src="C:\Users\vignan\Documents\FEAD_projests_231FA04F71\images\b.jpg" alt="Product Image">
+            <h3>Biriyanis</h3>
+        </div>
+        <div class="product-item">
+            <img src="C:\Users\vignan\Documents\FEAD_projests_231FA04F71\images\t.jpg" alt="Product Image">
+            <h3>Thalis</h3>
+        </div>
+        <div class="product-item">
+            <img src="C:\Users\vignan\Documents\FEAD_projests_231FA04F71\images\m.jpg" alt="Product Image">
+            <h3>Mandis</h3>
+        </div>
+    </div>
+
+    <h2>Order Details:</h2>
+    <div class="delivery-form">
+        <form id="orderForm" action="#" method="POST">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="address">Delivery Address</label>
+            <input type="text" id="address" name="address" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <label for="product">Select Products</label>
+            <select id="product" name="product[]" multiple>
+                <option value="Biriyanis">Biriyanis</option>
+                <option value="Thalis">Thalis</option>
+                <option value="Mandis">Mandis</option>
+            </select>
+
+            <div id="quantities"></div>
+
+            <!-- Change type to "button" so form won't be submitted immediately -->
+            <button type="button" onclick="calculateTotal()">Place Order</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Order Successfully Placed!</h2>
+        <p id="orderDetails"></p>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 Online Delivery Service | Only cash on delivery</p>
+</footer>
+
+<script>
+    // Product Prices
+    const productPrices = {
+        "Biriyanis": 200,
+        "Thalis": 150,
+        "Mandis": 180
+    };
+
+    // Type options
+    const productTypes = {
+        "Biriyanis": ['Dum', 'Fry Piece', 'Lolipop', 'Rambo', 'Wings'],
+        "Thalis": ['Dum', 'Fry Piece', 'Tandoori', 'Mixed'],
+        "Mandis": ['Arabian', 'Lolipop', 'Mixed', 'Tandoori']
+    };
+
+    // Get the modal and close button
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+
+    function calculateTotal() {
+        let selectedOptions = Array.from(document.getElementById('product').selectedOptions).map(option => option.value);
+        let total = 0;
+        let orderDetailsText = "You have ordered the following:\n\n";
+
+        selectedOptions.forEach(product => {
+            let quantityInput = document.querySelector(`input[name="quantity_${product}"]`);
+            let quantity = quantityInput ? quantityInput.value : 0;
+            let typeSelect = document.querySelector(`select[name="${product}_type"]`);
+            let type = typeSelect ? typeSelect.value : "";
+
+            if (quantity && type) {
+                total += productPrices[product] * quantity;
+                orderDetailsText += `${product} (${type}): ${quantity} x ?${productPrices[product]} = ?${productPrices[product] * quantity}\n`;
+            }
+        });
+
+        orderDetailsText += `\nTotal Amount: ?${total}`;
+        document.getElementById('orderDetails').innerText = orderDetailsText;
+
+        // Display the modal
+        modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Dynamically generate the quantity and type fields when products are selected
+    document.getElementById('product').addEventListener('change', function() {
+        let selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
+        let quantitiesDiv = document.getElementById('quantities');
+        quantitiesDiv.innerHTML = '';
+
+        selectedOptions.forEach(product => {
+            let label = document.createElement('label');
+            label.innerText = `Enter quantity for ${product}`;
+
+            let quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.name = `quantity_${product}`;
+            quantityInput.placeholder = 'Enter quantity';
+            quantityInput.min = 1;
+
+            let typeLabel = document.createElement('label');
+            typeLabel.innerText = `Select type of ${product}`;
+            
+            let typeSelect = document.createElement('select');
+            typeSelect.name = `${product}_type`;
+
+            // Add product types to the select dropdown
+            productTypes[product].forEach(type => {
+                let option = document.createElement('option');
+                option.value = type;
+                option.innerText = type;
+                typeSelect.appendChild(option);
+            });
+
+            quantitiesDiv.appendChild(label);
+            quantitiesDiv.appendChild(quantityInput);
+            quantitiesDiv.appendChild(typeLabel);
+            quantitiesDiv.appendChild(typeSelect);
+            quantitiesDiv.appendChild(document.createElement('br'));
+        });
+    });
+</script>
+
+</body>
+</html>
